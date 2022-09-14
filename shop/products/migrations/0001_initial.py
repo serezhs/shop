@@ -48,7 +48,9 @@ class Migration(migrations.Migration):
                 (
                     "price",
                     models.PositiveIntegerField(
-                        validators=[django.core.validators.MinValueValidator(1)]
+                        validators=[
+                            django.core.validators.MinValueValidator(1)
+                        ]
                     ),
                 ),
                 ("available", models.BooleanField(default=False)),
