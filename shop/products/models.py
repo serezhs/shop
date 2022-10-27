@@ -3,7 +3,10 @@ from django.db import models
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(
+        max_length=100, unique=True, verbose_name="Название категории"
+    )
+    slug = models.SlugField(unique=True, verbose_name="Слаг")
 
     class Meta:
         verbose_name = "Категория"
