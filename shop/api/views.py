@@ -1,27 +1,24 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
-from rest_framework.views import APIView
-from rest_framework import status
-from rest_framework.response import Response
+from rest_framework import generics, viewsets
 
 from products.models import Category, Product
-from .serializers import CategorySerializer, ProductSerializer
+from .serializers import (
+    CategoryDetailSerializer,
+    CategorySerializer,
+    ProductDetailSerializer,
+)
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryList(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
 
+class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategoryDetailSerializer
+    lookup_field = "slug"
+
+
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-
-
-class APICategory(APIView):
-    def get(self, request, slug):
-        category = get_object_or_404(Category, slug=slug)
-
-        products = Product.objects.filter(category=category)
-        serializer = ProductSerializer(products, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    serializer_class = ProductDetailSerializer

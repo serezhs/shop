@@ -4,7 +4,7 @@ from django.db import models
 
 class Category(models.Model):
     name = models.CharField(
-        max_length=100, unique=True, verbose_name="Название категории"
+        max_length=100, unique=True, verbose_name="Название"
     )
     slug = models.SlugField(unique=True, verbose_name="Слаг")
 
@@ -17,17 +17,20 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=250)
-    description = models.TextField()
+    name = models.CharField(max_length=250, verbose_name="Название")
+    description = models.TextField(verbose_name="Описание")
     category = models.ForeignKey(
         Category,
         on_delete=models.SET_NULL,
         related_name="products",
         blank=True,
         null=True,
+        verbose_name="Категория",
     )
-    price = models.PositiveIntegerField(validators=[MinValueValidator(1)])
-    available = models.BooleanField(default=False)
+    price = models.PositiveIntegerField(
+        validators=[MinValueValidator(1)], verbose_name="Цена"
+    )
+    available = models.BooleanField(default=False, verbose_name="В наличии")
 
     class Meta:
         verbose_name = "Товар"
