@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework.authtoken",
+    "djoser",
     "api.apps.ApiConfig",
     "products.apps.ProductsConfig",
-    'users.apps.UsersConfig',
+    "users.apps.UsersConfig",
     "phonenumber_field",
 ]
 
@@ -129,4 +131,27 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = "users.User"
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+}
+
+DJOSER = {
+    "LOGIN_FIELD": "email",
+    "LOGOUT_ON_PASSWORD_CHANGE": True,
+    "SERIALIZERS": {
+        "user": "users.serializers.UserSerializer",
+        "current_user": "users.serializers.UserSerializer",
+        "user_create": "users.serializers.UserCreateSerializer",
+    },
+    "PERMISSIONS": {
+        "user": ["users.permissions.UserOrReadOnly"],
+        "user_list": ["users.permissions.UserOrReadOnly"],
+    },
+}
