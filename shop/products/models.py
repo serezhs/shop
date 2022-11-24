@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
+from users.models import User
 
 
 class Category(models.Model):
@@ -38,3 +39,23 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Cart(models.Model):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, verbose_name="Пользователь"
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="shopping_cart",
+        verbose_name="Товар",
+    )
+    quantity = models.PositiveIntegerField(
+        verbose_name="Количество", default=1
+    )
+
+    class Meta:
+        unique_together = ("user", "product")
+        verbose_name = "Корзина"
+        verbose_name_plural = "Корзина"

@@ -1,10 +1,14 @@
-from rest_framework import generics, viewsets
+from django.shortcuts import get_object_or_404
+from products.models import Cart, Category, Product
+from rest_framework import generics, status, viewsets
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from products.models import Category, Product
 from .serializers import (
     CategoryDetailSerializer,
     CategorySerializer,
     ProductDetailSerializer,
+    CartSerializer,
 )
 
 
@@ -22,3 +26,70 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializer
+
+
+class CartList(generics.ListCreateAPIView):
+    serializer_class = CartSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+
+        queryset = Cart.objects.filter(user=user)
+        return queryset
+
+
+class APICart(APIView):
+    def post(self, request, id):
+        product = get_object_or_404(Product, id=id)
+
+        if product.available is False:
+            return Response(
+                {
+                    "errors": (
+                        "Извините, в данный момент "
+                        "товар не доступен к покупке"
+                    )
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user = request.user
+        cart = Cart.objects.filter(user=user, product=product)
+
+        if cart.exists():
+            cart = Cart.objects.get(user=user, product=product)
+            cart.quantity += 1
+            cart.save()
+
+            serializer = CartSerializer(cart)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        else:
+            cart = Cart.objects.create(user=user, product=product)
+
+            serializer = CartSerializer(cart)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def delete(self, request, id):
+        product = get_object_or_404(Product, id=id)
+        user = request.user
+        cart = Cart.objects.filter(user=user, product=product)
+
+        if cart.exists():
+            cart = Cart.objects.get(user=user, product=product)
+
+            if cart.quantity > 1:
+                cart.quantity -= 1
+                cart.save()
+
+            else:
+                cart.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+
+            serializer = CartSerializer(cart)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(
+            {"errors": "Этого товара уже нет в корзине"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
