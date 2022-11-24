@@ -3,6 +3,7 @@ from products.models import Cart, Category, Product
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import filters
 
 from .serializers import (
     CategoryDetailSerializer,
@@ -10,6 +11,7 @@ from .serializers import (
     ProductDetailSerializer,
     CartSerializer,
 )
+from .pagination import ProductPagination
 
 
 class CategoryList(generics.ListCreateAPIView):
@@ -26,6 +28,13 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializer
+    pagination_class = ProductPagination
+    filter_backends = (
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    )
+    search_fields = ("name", "category__name")
+    ordering_fields = ("price",)
 
 
 class CartList(generics.ListCreateAPIView):
