@@ -35,6 +35,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     )
     search_fields = ("name", "category__name")
     ordering_fields = ("price",)
+    ordering = ('-available',)
 
 
 class CartList(generics.ListCreateAPIView):

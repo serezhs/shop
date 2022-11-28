@@ -59,3 +59,6 @@ class Cart(models.Model):
         unique_together = ("user", "product")
         verbose_name = "Корзина"
         verbose_name_plural = "Корзина"
+
+    def __str__(self):
+        return self.product, self.quantity, self.user
