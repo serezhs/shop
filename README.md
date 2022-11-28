@@ -16,4 +16,3 @@
   
 - api/v1/products/{id}/cart/ (POST): добавление товара id в корзину.
 - api/v1/products/{id}/cart/ (DELETE): удаление товара id из корзины.
-cvcv
