@@ -12,17 +12,20 @@ from .serializers import (
     CartSerializer,
 )
 from .pagination import ProductPagination
+from .permissions import IsAdminOrReadOnly
 
 
 class CategoryList(generics.ListCreateAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Category.objects.all()
     serializer_class = CategoryDetailSerializer
     lookup_field = "slug"
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -35,10 +38,11 @@ class ProductViewSet(viewsets.ModelViewSet):
     )
     search_fields = ("name", "category__name")
     ordering_fields = ("price",)
-    ordering = ('-available',)
+    ordering = ("-available",)
+    permission_classes = (IsAdminOrReadOnly,)
 
 
-class CartList(generics.ListCreateAPIView):
+class CartList(generics.ListAPIView):
     serializer_class = CartSerializer
 
     def get_queryset(self):
