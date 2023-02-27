@@ -1,21 +1,27 @@
 from rest_framework import serializers
+from drf_extra_fields.fields import Base64ImageField
 
 from products.models import Category, Product, Cart
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    image = Base64ImageField()
+
     class Meta:
         model = Product
         fields = (
             "id",
             "name",
             "description",
+            "image",
             "price",
             "available",
         )
 
 
 class ProductDetailSerializer(serializers.ModelSerializer):
+    image = Base64ImageField(required=False, allow_null=True)
+
     class Meta:
         model = Product
         fields = (
@@ -23,6 +29,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "name",
             "description",
             "category",
+            "image",
             "price",
             "available",
         )

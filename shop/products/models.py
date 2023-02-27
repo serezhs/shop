@@ -28,6 +28,12 @@ class Product(models.Model):
         null=True,
         verbose_name="Категория",
     )
+    image = models.ImageField(
+        upload_to="products/images/",
+        null=True,
+        default=None,
+        verbose_name="Фото",
+    )
     price = models.PositiveIntegerField(
         validators=[MinValueValidator(1)], verbose_name="Цена"
     )
