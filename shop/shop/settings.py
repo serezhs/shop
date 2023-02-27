@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "products.apps.ProductsConfig",
     "users.apps.UsersConfig",
     "phonenumber_field",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -151,6 +152,7 @@ REST_FRAMEWORK = {
         "user": "24/minute",
         "anon": "12/minute",
     },
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 DJOSER = {
@@ -165,4 +167,11 @@ DJOSER = {
         "user": ["users.permissions.UserOrReadOnly"],
         "user_list": ["users.permissions.UserOrReadOnly"],
     },
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Your Project API",
+    "DESCRIPTION": "Your project description",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
 }
